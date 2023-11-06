@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useState } from "react";
-import { SearchBar } from "./components/SearchBar";
+import { SearchBar } from "../components/SearchBar";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
