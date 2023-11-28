@@ -1,24 +1,28 @@
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 interface SearchBarProps {
   value: string;
-  setValue: (value: string) => void;
-  onSubmit: () => void;
 }
 
-export const SearchBar = ({ value, setValue, onSubmit }: SearchBarProps) => {
+const search = async (formData: FormData) => {
+  "use server";
+  redirect(`/?search=${formData.get("search")}`);
+};
+
+export const SearchBar = ({ value }: SearchBarProps) => {
   return (
-    <div className="flex flex-row items-center gap-2">
+    <form className="flex flex-row items-center gap-2" action={search}>
       <input
+        defaultValue={value}
         className="rounded-lg px-4 py-1"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
         placeholder="Search for books"
-        onKeyDown={(e) => e.key === "Enter" && value !== "" && onSubmit()}
+        name="search"
       ></input>
-      <button className="rounded-lg bg-zinc-50 p-2" onClick={onSubmit} disabled={!value}>
+      <button className="rounded-lg bg-zinc-50 p-2" type="submit">
         <MagnifyingGlassIcon className="" />
       </button>
-    </div>
+    </form>
   );
 };
