@@ -1,4 +1,3 @@
-import axios from "axios";
 import { SearchBar } from "../components/SearchBar";
 import { redirect } from "next/navigation";
 import { GET as getAllBooks } from "./api/route";
@@ -7,16 +6,21 @@ const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 const getBooks = async (input: string) => {
   if (!input) return null;
-  const res = await axios.get("https://www.googleapis.com/books/v1/volumes", {
-    params: { q: input, key: apiKey },
-  });
-  return res.data.items;
+  const res = await fetch(
+    "https://www.googleapis.com/books/v1/volumes?" +
+      new URLSearchParams({
+        q: input,
+        key: apiKey!,
+      }),
+  );
+
+  return (await res.json()).items;
 };
 const getBookDetails = async (id: string) => {
-  const res = await axios.get(`https://www.googleapis.com/books/v1/volumes/${id}`, {
-    params: { key: apiKey },
-  });
-  return res.data;
+  const res = await fetch(
+    `https://www.googleapis.com/books/v1/volumes/${id}?` + new URLSearchParams({ key: apiKey! }),
+  );
+  return await res.json();
 };
 
 const featured = async (formData: FormData) => {
