@@ -20,6 +20,7 @@
     "drizzle-orm": "^0.29.2",
     "eslint": "8.46.0",
     "eslint-config-next": "^14.0.1",
+    "googleapis": "^129.0.0",
     "next": "^14.0.1",
     "postcss": "8.4.27",
     "react": "^18.2.0",
