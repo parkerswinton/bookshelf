@@ -1,6 +1,7 @@
 import { SearchBar } from "../components/SearchBar";
 import { redirect } from "next/navigation";
-import { google } from "googleapis";
+import { books_v1, google } from "googleapis";
+import { book, db } from "@/db";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -20,6 +21,19 @@ const getBookDetails = async (id: string) => {
 const featured = async (formData: FormData) => {
   "use server";
   redirect(`/?search=${formData.get("search")}&featured=${formData.get("featured")}`);
+};
+
+const addFeatured = async (b: books_v1.Schema$Volume, formData: FormData) => {
+  "use server";
+  if (!b.id || !b.volumeInfo || !b.volumeInfo.title) return;
+  await db.insert(book).values({
+    googleId: b.id,
+    title: b.volumeInfo.title,
+    author: b.volumeInfo.authors?.join("$$$"),
+    pageCount: b.volumeInfo.pageCount,
+    averageRating: b.volumeInfo.averageRating,
+    imageLink: b.volumeInfo.imageLinks?.smallThumbnail,
+  });
 };
 
 export default async function Home({ searchParams }: { searchParams: { [key: string]: string } }) {
@@ -61,6 +75,7 @@ const FeaturedBook = async ({ id }: { id: string | null }) => {
   if (!id) return null;
 
   const featuredBook = await getBookDetails(id);
+  const addFeaturedWithBook = addFeatured.bind(null, featuredBook);
 
   return (
     <div className="flex gap-2 rounded-md border border-black p-4">
@@ -74,6 +89,9 @@ const FeaturedBook = async ({ id }: { id: string | null }) => {
         <h1>Author(s): {featuredBook.volumeInfo?.authors?.join(", ")}</h1>
         <h1>Pages: {featuredBook.volumeInfo?.pageCount}</h1>
         <h1>Avg. Rating: {featuredBook.volumeInfo?.averageRating || "Unknown"}</h1>
+        <form action={addFeaturedWithBook}>
+          <button type="submit">Add Book</button>
+        </form>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export const book = mysqlTable("book", {
   title: varchar("title", { length: 255 }).notNull(),
   author: varchar("author", { length: 255 }),
   pageCount: smallint("page_count"),
-  averageRating: decimal("average_rating", { precision: 2, scale: 1 }),
+  averageRating: decimal("average_rating", { precision: 2, scale: 1 }).$type<number>(),
   imageLink: varchar("imageLink", { length: 355 }),
 });
 
