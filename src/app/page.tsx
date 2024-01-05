@@ -2,6 +2,7 @@ import { SearchBar } from "../components/SearchBar";
 import { redirect } from "next/navigation";
 import { books_v1, google } from "googleapis";
 import { book, db } from "@/db";
+import { Rating } from "@/components/Rating";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -9,7 +10,10 @@ const books = google.books("v1");
 
 const getBooks = async (input: string) => {
   if (!input) return null;
-  const { data } = await books.volumes.list({ key: apiKey, q: input });
+  const { data } = await books.volumes.list(
+    { key: apiKey, q: input },
+    { rootUrl: "https://books.googleapis.com/" },
+  );
   return data.items;
 };
 
@@ -89,6 +93,7 @@ const FeaturedBook = async ({ id }: { id: string | null }) => {
         <h1>Author(s): {featuredBook.volumeInfo?.authors?.join(", ")}</h1>
         <h1>Pages: {featuredBook.volumeInfo?.pageCount}</h1>
         <h1>Avg. Rating: {featuredBook.volumeInfo?.averageRating || "Unknown"}</h1>
+        <Rating value={3.5}></Rating>
         <form action={addFeaturedWithBook}>
           <button type="submit">Add Book</button>
         </form>
