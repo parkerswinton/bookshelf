@@ -69,7 +69,6 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
               );
           })}
       </div>
-
       <FeaturedBook id={featuredBook} />
     </main>
   );
@@ -92,8 +91,12 @@ const FeaturedBook = async ({ id }: { id: string | null }) => {
         <h1 className="text-xl font-medium">{featuredBook.volumeInfo?.title}</h1>
         <h1>Author(s): {featuredBook.volumeInfo?.authors?.join(", ")}</h1>
         <h1>Pages: {featuredBook.volumeInfo?.pageCount}</h1>
-        <h1>Avg. Rating: {featuredBook.volumeInfo?.averageRating || "Unknown"}</h1>
-        <Rating value={3.5}></Rating>
+        {featuredBook.volumeInfo?.averageRating ? (
+          <Rating value={featuredBook.volumeInfo?.averageRating} />
+        ) : (
+          <h1>Unknown Rating</h1>
+        )}
+
         <form action={addFeaturedWithBook}>
           <button type="submit">Add Book</button>
         </form>
