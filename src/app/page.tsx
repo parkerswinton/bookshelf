@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { books_v1, google } from "googleapis";
 import { book, db } from "@/db";
 import { Rating } from "@/components/Rating";
-import { auth } from "@/auth/lucia";
 import * as context from "next/headers";
+import { auth } from "@/auth";
 
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
@@ -45,16 +45,16 @@ const addFeatured = async (b: books_v1.Schema$Volume, formData: FormData) => {
 export default async function Home({ searchParams }: { searchParams: { [key: string]: string } }) {
   const input = searchParams["search"] || "";
   const featuredBook = searchParams["featured"] || "";
-  const authRequest = auth.handleRequest("GET", context);
-  const session = await authRequest.validate();
 
   const books = await getBooks(input);
+
+  const session = await auth();
 
   return (
     <main className="flex h-screen flex-col items-center gap-4">
       <h1>Bookshelf</h1>
       <div>
-        {!session ? <a href="/login/github">Login</a> : <div>hi {session.user.githubUsername}</div>}
+        {!session ? <a href="/api/auth/signin">Login</a> : <div>hi {session.user?.name}</div>}
       </div>
       <SearchBar value={input} />
       <div className="flex w-1/2 items-center justify-between gap-2 overflow-y-auto rounded-md border border-black p-4">
